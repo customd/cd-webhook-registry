@@ -42,7 +42,7 @@ class WebhookCalls extends Model
 
     public function getUrlAttribute(): string
     {
-        $url = rtrim($this->consumer->base_path, '/');
+        $url = rtrim($this->consumer->base_url, '/');
         $path = ltrim($this->url_path, '/');
 
         return $url.'/'.$path;
