@@ -1,6 +1,6 @@
 {
   "name": "custom-d/webhook-registry",
-  "description": "A webhook registry",
+  "description": "A webhook registry to manage webhooks in laravel projects",
   "license": "MIT",
   "keywords": [
     "webhook",
@@ -9,8 +9,8 @@
   "type": "library",
   "authors": [
     {
-      "name": "",
-      "email": ""
+      "name": "Craig G Smith",
+      "email": "craig.smith@customd.com"
     }
   ],
   "require": {
