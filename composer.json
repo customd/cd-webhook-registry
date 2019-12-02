@@ -1,0 +1,53 @@
+{
+  "name": "custom-d/webhook-registry",
+  "description": "A webhook registry",
+  "license": "MIT",
+  "keywords": [
+    "webhook",
+    "registry"
+  ],
+  "type": "library",
+  "authors": [
+    {
+      "name": "",
+      "email": ""
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "illuminate/support": "^6.0",
+    "spatie/laravel-webhook-server" : "^1.4"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^4.0",
+    "phpunit/phpunit": "^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "CustomD\\WebhookRegistry\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CustomD\\WebhookRegistry\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "phpunit": "phpunit"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CustomD\\WebhookRegistry\\ServiceProvider"
+      ],
+      "aliases": {
+		"WebhookRegistry": "CustomD\\WebhookRegistry\\Facades\\WebhookRegistry"
+		}
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  }
+}
