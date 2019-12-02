@@ -137,7 +137,7 @@ class WebhookRegistry
         }
 
         if (Arr::has($payload, 'meta')) {
-            $hook->withMeta($payload['meta']);
+            $hook->meta($payload['meta']);
         }
 
         $hook->dispatch();
