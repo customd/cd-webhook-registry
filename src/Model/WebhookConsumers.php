@@ -3,8 +3,9 @@
 namespace CustomD\WebhookRegistry\Model;
 
 use Illuminate\Database\Eloquent\Model;
+
 /**
- * CustomD\WebhookRegistry\Model\WebhookConsumers
+ * CustomD\WebhookRegistry\Model\WebhookConsumers.
  *
  * @property int $id
  * @property string $name

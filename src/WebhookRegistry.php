@@ -124,9 +124,9 @@ class WebhookRegistry
     protected function dispatchWebookCall(WebhookCalls $call, array $payload): void
     {
         $hook = WebhookCall::create()
-        ->url($call->url)
-        ->payload($payload['body'] ?? [])
-        ->useSecret($call->consumer->token);
+            ->url($call->url)
+            ->payload($payload['body'] ?? [])
+            ->useSecret($call->consumer->token);
 
         if (! $call->consumer->verify_ssl) {
             $hook->doNotVerifySsl();

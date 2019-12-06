@@ -5,7 +5,7 @@ namespace CustomD\WebhookRegistry\Model;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * CustomD\WebhookRegistry\Model\WebhookCalls
+ * CustomD\WebhookRegistry\Model\WebhookCalls.
  *
  * @property int $id
  * @property string $name

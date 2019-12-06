@@ -4,8 +4,9 @@ namespace CustomD\WebhookRegistry;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    protected const CONFIG_PATH = __DIR__ . '/../config/webhook-registry.php';
-    protected const MIGRATIONS_PATH = __DIR__ . '/../database/migrations/';
+    protected const CONFIG_PATH = __DIR__.'/../config/webhook-registry.php';
+
+    protected const MIGRATIONS_PATH = __DIR__.'/../database/migrations/';
 
     public function boot()
     {

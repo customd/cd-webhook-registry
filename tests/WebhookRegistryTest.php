@@ -22,10 +22,7 @@ class WebhookRegistryTest extends TestCase
 
     public function testCreateConsumer()
     {
-        $consumer_id = WebhookRegistry::registerConsumer('test','testing','https://test.docksal');
-        $call_id = WebhookRegistry::registerCall($consumer_id,'test','test','run.test');
-
-
+        //  $consumer_id = WebhookRegistry::registerConsumer('test', 'testing', 'https://test.docksal');
+       // $call_id = WebhookRegistry::registerCall($consumer_id, 'test', 'test', 'run.test');
     }
-
 }
