@@ -47,11 +47,34 @@ php artisan vendor:publish --provider="CustomD\WebhookRegistry\ServiceProvider" 
 
 ## Usage
 
-CHANGE ME
+Implement the `CustomD\WebhookRegistry\Contracts\ShouldDeliverWebhooks` contract on any event you'd like to trigger a web-hook. This contract requires a `getWebhookPayload` method to be defined on your event, which will provide the payload details.
+
+Your payload must define a `body`, but can also define `tags` and `meta` information for passing to `Spatie\WebhookServer\WebhookCall`.
+
+```
+    /**
+     * Get the webhook payload
+     *
+     * @return string
+     */
+    public function getWebhookPayload(): array
+    {
+        $user = request()->user();
+
+        return [
+            'body' => [
+                'status' => $this->status,
+                'triggered_by' => $user && $user->toArray()
+            ]
+        ];
+    }
+```
+
+Create webhook endpoints uing `CustomD\WebhookRegistry\Model\WebhookEndpoint` or using the facade `WebhookRegistry::registerEndpoint` method, and associate a webhook event to an endpoint with the `CustomD\WebhookRegistry\Model\WebhookEvent` model, or using the facade `WebhookRegistry::registerEvent`.
 
 ## Security
 
-If you discover any security related issues, please email 
+If you discover any security related issues, please email
 instead of using the issue tracker.
 
 ## Credits

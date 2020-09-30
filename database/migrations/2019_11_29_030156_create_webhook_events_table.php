@@ -4,23 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWebhookCallsTable extends Migration
+class CreateWebhookEventsTable extends Migration
 {
     /**
      * Run the migrations.
      */
     public function up()
     {
-        Schema::create('webhook_calls', function (Blueprint $table) {
+        Schema::create('webhook_events', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('url_path');
             $table->string('event');
-            $table->unsignedBigInteger('webhook_consumer_id');
+            $table->foreignId('webhook_endpoint_id')->constrained('webhook_endpoints')->onDelete('cascade')->onUpdate('restrict');
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('webhook_consumer_id')->references('id')->on('webhook_calls')->onDelete('CASCADE')->onUpdate('RESTRICT');
         });
     }
 
@@ -29,6 +25,6 @@ class CreateWebhookCallsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('webhook_calls');
+        Schema::dropIfExists('webhook_events');
     }
 }

@@ -2,8 +2,8 @@
 
 namespace CustomD\WebhookRegistry;
 
-use CustomD\WebhookRegistry\Model\WebhookCalls;
-use CustomD\WebhookRegistry\Model\WebhookConsumers;
+use CustomD\WebhookRegistry\Model\WebhookEvent;
+use CustomD\WebhookRegistry\Model\WebhookEndpoint;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
@@ -12,84 +12,80 @@ use Spatie\WebhookServer\WebhookCall;
 class WebhookRegistry
 {
     /**
-     * Method to register a new consumer.
+     * Method to register a new endpoint.
      *
-     * @param string $name = name of the consumer service
-     * @param string $token = token for verification of signature
      * @param string $baseUrl = base url of service
+     * @param string $description = description of the endpoint service
      * @param bool $verifySSL = whether or not to verify ssl
      *
-     * @return int  -record id
+     * @return WebhookEndpoint  -record id
      */
-    public function registerConsumer(string $name, string $token, string $baseUrl, bool $verifySSL = true): int
+    public function registerEndpoint(string $baseUrl, string $description, bool $verifySSL = true): WebhookEndpoint
     {
-        $record = WebhookConsumers::create([
-            'name' => $name,
-            'token' => $token,
+        $record = WebhookEndpoint::create([
+            'description' => $description,
             'base_url' => $baseUrl,
             'verify_ssl' => (int) $verifySSL,
         ]);
 
-        return $record->id;
+        return $record;
     }
 
     /**
-     * register a call to a service.
+     * register a event to a service.
      *
-     * @param int $consumerId
-     * @param string $name
+     * @param int $webhookId
+     * @param string $description
      * @param string $path
      * @param string $event
      *
      * @return int
      */
-    public function registerCall(int $consumerId, string $name, string $path, string $event): int
+    public function registerEvent(int $webhookId, string $event): WebhookEvent
     {
-        $record = WebhookCalls::create([
-            'name' => $name,
-            'url_path' => $path,
+        $record = WebhookEvent::create([
             'event' => $event,
-            'webhook_consumer_id' => $consumerId,
+            'webhook_id' => $webhookId,
         ]);
 
-        return $record->id;
+        return $record;
     }
 
     /**
-     * Delete a call.
+     * Delete a event.
      *
-     * @param int $callId
+     * @param int $eventId
      *
      * @throws ModelNotFoundException
      */
-    public function deleteCall(int $callId): void
+    public function deleteEvent(int $eventId): void
     {
-        WebhookConsumers::findOrFail($callId)->delete();
+        WebhookEndpoint::findOrFail($eventId)->delete();
     }
 
     /**
-     * Restored a deleted call.
+     * Restored a deleted event.
      *
-     * @param int $callId
+     * @param int $eventId
      *
      * @throws ModelNotFoundException
      */
-    public function restoreCall(int $callId): void
+    public function restoreEvent(int $eventId): void
     {
-        WebhookConsumers::withTrashed()->findOrFail($callId)->restore();
+        WebhookEndpoint::withTrashed()->findOrFail($eventId)->restore();
     }
 
     /**
-     * Get calls from the database.
+     * Get events from the database.
      *
      * @param string|null $event
      * @param bool $includeDeleted
      *
      * @return Collection
      */
-    public function getCalls(?string $event = null, bool $includeDeleted = false): Collection
+    public function getEvents(?string $event = null, bool $includeDeleted = false): Collection
     {
-        $model = WebhookCalls::with('consumers');
+        $model = WebhookEvent::with('endpoint');
 
         if ($event) {
             $model->where('event', $event);
@@ -110,25 +106,27 @@ class WebhookRegistry
      */
     public function trigger(string $event, array $payload = []): void
     {
-        $calls = $this->getCalls($event);
+        $events = $this->getEvents($event);
 
-        if ($calls->isEmpty()) {
+        if ($events->isEmpty()) {
             return;
         }
 
-        foreach ($calls as $call) {
-            $this->dispatchWebookCall($call, $payload);
+        foreach ($events as $event) {
+            $this->dispatchWebhook($event->endpoint, $payload);
         }
     }
 
-    protected function dispatchWebookCall(WebhookCalls $call, array $payload): void
+    protected function dispatchWebhook(WebhookEndpoint $endpoint, array $payload): void
     {
         $hook = WebhookCall::create()
-            ->url($call->url)
+            ->url($endpoint->base_url)
             ->payload($payload['body'] ?? [])
-            ->useSecret($call->consumer->token);
+            ->useSecret($endpoint->secret)
+            ->timeoutInSeconds(30)
+            ->maximumTries(1);
 
-        if (! $call->consumer->verify_ssl) {
+        if (! $endpoint->verify_ssl) {
             $hook->doNotVerifySsl();
         }
 
@@ -140,11 +138,12 @@ class WebhookRegistry
             $hook->meta($payload['meta']);
         }
 
-        $hook->dispatch();
+        // No need to queue. The developer can queue their events if they wish.
+        $hook->dispatchNow();
     }
 
     /**
-     * Does the event have any available calls.
+     * Does the event have any available hooks.
      *
      * @param string $event
      * @param bool $includeDeleted
@@ -153,7 +152,7 @@ class WebhookRegistry
      */
     public function has(string $event, $includeDeleted = false): bool
     {
-        $status = WebhookCalls::where('event', $event);
+        $status = WebhookEvent::where('event', $event);
 
         if ($includeDeleted) {
             $status->withTrashed();

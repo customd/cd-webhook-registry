@@ -2,6 +2,8 @@
 
 namespace CustomD\WebhookRegistry;
 
+use CustomD\WebhookRegistry\Providers\EventServiceProvider;
+
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     protected const CONFIG_PATH = __DIR__.'/../config/webhook-registry.php';
@@ -26,5 +28,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bind('webhook-registry', static function () {
             return new WebhookRegistry();
         });
+
+        $this->app->register(EventServiceProvider::class);
     }
 }
