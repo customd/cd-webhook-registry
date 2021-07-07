@@ -2,8 +2,8 @@
 
 namespace CustomD\WebhookRegistry\Listeners;
 
+use CustomD\WebhookRegistry\Models\WebhookRequest;
 use Spatie\WebhookServer\Events\WebhookCallEvent;
-use CustomD\WebhookRegistry\Model\WebhookRequest;
 use Spatie\WebhookServer\Events\WebhookCallFailedEvent;
 use Spatie\WebhookServer\Events\WebhookCallSucceededEvent;
 use Spatie\WebhookServer\Events\FinalWebhookCallFailedEvent;
@@ -49,7 +49,7 @@ class LoggingEventSubscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @param  \Illuminate\Events\Dispatcher  $events
+     * @param \Illuminate\Events\Dispatcher $events
      */
     public function subscribe($events)
     {

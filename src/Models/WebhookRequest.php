@@ -1,6 +1,6 @@
 <?php
 
-namespace CustomD\WebhookRegistry\Model;
+namespace CustomD\WebhookRegistry\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

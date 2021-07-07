@@ -2,8 +2,9 @@
 
 namespace CustomD\WebhookRegistry;
 
-use CustomD\WebhookRegistry\Model\WebhookEvent;
-use CustomD\WebhookRegistry\Model\WebhookEndpoint;
+use CustomD\WebhookRegistry\Models\WebhookEvent;
+use CustomD\WebhookRegistry\Models\WebhookEndpoint;
+use CustomD\WebhookRegistry\Models\Contracts\WebhookEndpointContract;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
@@ -14,19 +15,23 @@ class WebhookRegistry
     /**
      * Method to register a new endpoint.
      *
-     * @param string $baseUrl = base url of service
+     * @param string $baseUrl     = base url of service
      * @param string $description = description of the endpoint service
-     * @param bool $verifySSL = whether or not to verify ssl
+     * @param bool   $verifySSL   = whether or not to verify ssl
      *
      * @return WebhookEndpoint  -record id
      */
     public function registerEndpoint(string $baseUrl, string $description, bool $verifySSL = true): WebhookEndpoint
     {
-        $record = WebhookEndpoint::create([
+        $webhookEndpointModel = resolve(config('webhook-registry.models.endpoint'));
+
+        $record = $webhookEndpointModel::create(
+            [
             'description' => $description,
             'base_url' => $baseUrl,
             'verify_ssl' => (int) $verifySSL,
-        ]);
+            ]
+        );
 
         return $record;
     }
@@ -34,7 +39,7 @@ class WebhookRegistry
     /**
      * register a event to a service.
      *
-     * @param int $webhookId
+     * @param int    $webhookId
      * @param string $description
      * @param string $path
      * @param string $event
@@ -43,10 +48,14 @@ class WebhookRegistry
      */
     public function registerEvent(int $webhookId, string $event): WebhookEvent
     {
-        $record = WebhookEvent::create([
+        $webhookEventModel = resolve(config('webhook-registry.models.event'));
+
+        $record = $webhookEventModel::create(
+            [
             'event' => $event,
             'webhook_id' => $webhookId,
-        ]);
+            ]
+        );
 
         return $record;
     }
@@ -60,7 +69,8 @@ class WebhookRegistry
      */
     public function deleteEvent(int $eventId): void
     {
-        WebhookEndpoint::findOrFail($eventId)->delete();
+        $webhookEndpointModel = resolve(config('webhook-registry.models.endpoint'));
+        $webhookEndpointModel::findOrFail($eventId)->delete();
     }
 
     /**
@@ -72,23 +82,25 @@ class WebhookRegistry
      */
     public function restoreEvent(int $eventId): void
     {
-        WebhookEndpoint::withTrashed()->findOrFail($eventId)->restore();
+        $webhookEndpointModel = resolve(config('webhook-registry.models.endpoint'));
+        $webhookEndpointModel ::withTrashed()->findOrFail($eventId)->restore();
     }
 
     /**
      * Get events from the database.
      *
      * @param string|null $event
-     * @param bool $includeDeleted
+     * @param bool        $includeDeleted
      *
      * @return Collection
      */
     public function getEvents(?string $event = null, bool $includeDeleted = false): Collection
     {
-        $model = WebhookEvent::with('endpoint');
+        $webhookEventModel = resolve(config('webhook-registry.models.event'));
+        $model = $webhookEventModel::with('endpoint');
 
         if ($event) {
-            $model->where('event', $event);
+            $model->whereEvent($event);
         }
 
         if ($includeDeleted) {
@@ -99,14 +111,33 @@ class WebhookRegistry
     }
 
     /**
+     * Get webhook events that can be dispatched.
+     *
+     * @param string|null $event
+     *
+     * @return Collection
+     */
+    public function getDispatchableEvents(?string $event = null): Collection
+    {
+        $webhookEventModel = resolve(config('webhook-registry.models.event'));
+        $model = $webhookEventModel::with('endpoint');
+
+        if ($event) {
+            $model->whereEvent($event);
+        }
+
+        return $model->whereDispatchable()->get();
+    }
+
+    /**
      * Trigger webhooks for a specific event.
      *
      * @param string $event
-     * @param array $payload
+     * @param array  $payload
      */
     public function trigger(string $event, array $payload = []): void
     {
-        $events = $this->getEvents($event);
+        $events = $this->getDispatchableEvents($event);
 
         if ($events->isEmpty()) {
             return;
@@ -117,7 +148,7 @@ class WebhookRegistry
         }
     }
 
-    protected function dispatchWebhook(WebhookEndpoint $endpoint, array $payload): void
+    protected function dispatchWebhook(WebhookEndpointContract $endpoint, array $payload): void
     {
         $hook = WebhookCall::create()
             ->url($endpoint->base_url)
@@ -146,13 +177,14 @@ class WebhookRegistry
      * Does the event have any available hooks.
      *
      * @param string $event
-     * @param bool $includeDeleted
+     * @param bool   $includeDeleted
      *
      * @return bool
      */
     public function has(string $event, $includeDeleted = false): bool
     {
-        $status = WebhookEvent::where('event', $event);
+        $webhookEventModel = resolve(config('webhook-registry.models.event'));
+        $status = $webhookEventModel::where('event', $event);
 
         if ($includeDeleted) {
             $status->withTrashed();

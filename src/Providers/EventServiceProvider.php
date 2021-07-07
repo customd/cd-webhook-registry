@@ -12,17 +12,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [
-        'CustomD\WebhookRegistry\Listeners\GeneralEventSubscriber',
-        'CustomD\WebhookRegistry\Listeners\LoggingEventSubscriber',
+        \CustomD\WebhookRegistry\Listeners\GeneralEventSubscriber::class,
+        \CustomD\WebhookRegistry\Listeners\LoggingEventSubscriber::class,
     ];
-
-    /**
-     * Register any events for your application.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        parent::boot();
-    }
 }
