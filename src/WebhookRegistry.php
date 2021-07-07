@@ -53,7 +53,7 @@ class WebhookRegistry
         $record = $webhookEventModel::create(
             [
             'event' => $event,
-            'webhook_id' => $webhookId,
+            'webhook_endpoint_id' => $webhookId,
             ]
         );
 
