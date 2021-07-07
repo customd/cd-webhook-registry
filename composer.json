@@ -9,14 +9,18 @@
   "type": "library",
   "authors": [
     {
+      "name": "Sam Sehnert",
+      "email": "sam@customd.com"
+    },
+    {
       "name": "Craig G Smith",
       "email": "craig.smith@customd.com"
     }
   ],
   "require": {
     "php": ">=7.2",
-    "illuminate/support": "^6.0|^7.0",
-    "spatie/laravel-webhook-server" : "^1.4"
+    "illuminate/support": "^6.0|^7.0|^8.0",
+    "spatie/laravel-webhook-server": "^1.4"
   },
   "require-dev": {
     "orchestra/testbench": "^4.0|^5.0",
@@ -41,8 +45,8 @@
         "CustomD\\WebhookRegistry\\ServiceProvider"
       ],
       "aliases": {
-		"WebhookRegistry": "CustomD\\WebhookRegistry\\Facades\\WebhookRegistry"
-		}
+        "WebhookRegistry": "CustomD\\WebhookRegistry\\Facades\\WebhookRegistry"
+      }
     }
   },
   "config": {

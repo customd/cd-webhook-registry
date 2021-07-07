@@ -53,9 +53,7 @@ Your payload must define a `body`, but can also define `tags` and `meta` informa
 
 ```
     /**
-     * Get the webhook payload
-     *
-     * @return string
+     * Get the payload for this webhook event
      */
     public function getWebhookPayload(): array
     {
