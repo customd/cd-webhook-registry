@@ -170,7 +170,7 @@ class WebhookRegistry
         }
 
         // No need to queue. The developer can queue their events if they wish.
-        $hook->dispatchNow();
+        $hook->dispatchSync();
     }
 
     /**
