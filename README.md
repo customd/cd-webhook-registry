@@ -89,11 +89,20 @@ $event = WebhookRegistry::registerEvent($webhook->id, 'App\Events\MyEvent');
 
 ## Models
 
-Customise the WebhookEvent model in order to add logic about when events should fire. In `config/webhook-registry.php` you will see the model name being used in `models` -> `events`. You can make your own model by implementing the `CustomD\WebhookRegistry\Models\Contracts\WebhookEventContract`.
+Customise the WebhookEvent model in order to add logic about when events should fire. In `config/webhook-registry.php` you will see the models being used in `models` -> `events`. You can make your own models by implementing the appropriate contract, and updating the config file.
 
-To specify which events are dispatchable in a given run, you must set a `scopeWhereDispatchable` on the model. This scope will be called before firing webhooks to endpoints with this event.
+```
+WebhookEndpoint extends Model implements CustomD\WebhookRegistry\Models\Contracts\WebhookEndpointContract
+WebhookEvent extends Model implements CustomD\WebhookRegistry\Models\Contracts\WebhookEventContract
+```
 
-By default this scope doesn't do anything.
+If you need to modify the `WebhookRequest` logging table, note that it doesn't need a contract and can be overridden as needed, but ensure the original fields exist, or define appropriate attribute mappings.
+
+### Custom 'dispatchable' logic
+
+To determine which events are dispatchable in a given execution, you must set a `scopeWhereDispatchable` on the `WebhookEvent` model. This scope will be used when finding events that should be fired.
+
+By default this scope doesn't do any filtering.
 
 ## Security
 
