@@ -18,5 +18,5 @@ interface WebhookEndpointContract
      * @param array $eventPayload
      * @return array
      */
-    public function getWebhookPayload(array $eventPayload): array;
+    public function getWebhookPayload(WebhookEventContract $event, array $payload): array;
 }

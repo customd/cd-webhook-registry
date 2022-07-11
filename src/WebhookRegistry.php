@@ -144,7 +144,8 @@ class WebhookRegistry
         }
 
         foreach ($events as $event) {
-            $this->dispatchWebhook($event->endpoint, $payload);
+            $endpoint = $event->endpoint;
+            $this->dispatchWebhook($endpoint, $endpoint->getWebhookPayload($event, $payload));
         }
     }
 
@@ -152,7 +153,7 @@ class WebhookRegistry
     {
         $hook = WebhookCall::create()
             ->url($endpoint->base_url)
-            ->payload($endpoint->getWebhookPayload($payload['body'] ?? []))
+            ->payload($payload['body'] ?? [])
             ->useSecret($endpoint->secret)
             ->timeoutInSeconds(30)
             ->maximumTries(1);
