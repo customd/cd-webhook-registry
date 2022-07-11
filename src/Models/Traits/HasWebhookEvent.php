@@ -2,9 +2,10 @@
 
 namespace CustomD\WebhookRegistry\Models\Traits;
 
-use CustomD\WebhookRegistry\Models\WebhookEvent;
 use Illuminate\Database\Eloquent\Builder;
+use CustomD\WebhookRegistry\Models\WebhookEvent;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use CustomD\WebhookRegistry\Models\Contracts\WebhookEventContract;
 
 trait HasWebhookEvent
 {
