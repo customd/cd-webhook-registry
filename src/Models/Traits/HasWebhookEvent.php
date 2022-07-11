@@ -20,7 +20,7 @@ trait HasWebhookEvent
 
     public function events(): HasMany
     {
-        return $this->hasMany(WebhookEvent::class);
+        return $this->hasMany(config('webhook-registry.models.event'));
     }
 
     public function getWebhookPayload(WebhookEventContract $event, array $payload): array

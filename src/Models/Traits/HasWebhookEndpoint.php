@@ -9,6 +9,6 @@ trait HasWebhookEndpoint
 {
     public function endpoint(): BelongsTo
     {
-        return $this->belongsTo(WebhookEndpoint::class, 'webhook_endpoint_id');
+        return $this->belongsTo(config('webhook-registry.models.endpoint'), 'webhook_endpoint_id');
     }
 }
