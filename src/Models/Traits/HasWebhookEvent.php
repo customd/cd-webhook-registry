@@ -22,7 +22,7 @@ trait HasWebhookEvent
         return $this->hasMany(WebhookEvent::class);
     }
 
-    public function getWebhookPayload(array $eventPayload): array
+    public function getWebhookPayload(WebhookEventContract $event, array $payload): array
     {
         return $eventPayload;
     }
