@@ -25,6 +25,6 @@ trait HasWebhookEvent
 
     public function getWebhookPayload(WebhookEventContract $event, array $payload): array
     {
-        return $eventPayload;
+        return $payload;
     }
 }
