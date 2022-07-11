@@ -152,7 +152,7 @@ class WebhookRegistry
     {
         $hook = WebhookCall::create()
             ->url($endpoint->base_url)
-            ->payload($payload['body'] ?? [])
+            ->payload($endpoint->getWebhookPayload($payload['body'] ?? []))
             ->useSecret($endpoint->secret)
             ->timeoutInSeconds(30)
             ->maximumTries(1);

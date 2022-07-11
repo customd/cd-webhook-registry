@@ -11,4 +11,12 @@ interface WebhookEndpointContract
       * Get the events relationship
       */
     public function events(): HasMany;
+
+    /**
+     * Get the webhook payload, customised for this specific endpoint.
+     *
+     * @param array $eventPayload
+     * @return array
+     */
+    public function getWebhookPayload(array $eventPayload): array;
 }
