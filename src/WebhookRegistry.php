@@ -144,7 +144,11 @@ class WebhookRegistry
         }
 
         foreach ($events as $event) {
-            $endpoint = $event->endpoint;
+
+            if (! $event->endpoint->shouldDeliverWebhook($event, $payload)) {
+                continue;
+            }
+
             $this->dispatchWebhook($endpoint, $endpoint->getWebhookPayload($event, $payload));
         }
     }

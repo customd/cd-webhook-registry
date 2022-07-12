@@ -27,4 +27,9 @@ trait HasWebhookEvent
     {
         return $payload;
     }
+
+    public function shouldDeliverWebhook(): bool
+    {
+        return true;
+    }
 }
