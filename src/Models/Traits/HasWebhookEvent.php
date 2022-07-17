@@ -2,9 +2,10 @@
 
 namespace CustomD\WebhookRegistry\Models\Traits;
 
-use CustomD\WebhookRegistry\Models\WebhookEvent;
 use Illuminate\Database\Eloquent\Builder;
+use CustomD\WebhookRegistry\Models\WebhookEvent;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use CustomD\WebhookRegistry\Models\Contracts\WebhookEventContract;
 
 trait HasWebhookEvent
 {
@@ -19,6 +20,16 @@ trait HasWebhookEvent
 
     public function events(): HasMany
     {
-        return $this->hasMany(WebhookEvent::class);
+        return $this->hasMany(config('webhook-registry.models.event'));
+    }
+
+    public function getWebhookPayload(WebhookEventContract $event, array $payload): array
+    {
+        return $payload;
+    }
+
+    public function shouldDeliverWebhook(WebhookEventContract $event, array $payload): bool
+    {
+        return true;
     }
 }
