@@ -17,7 +17,7 @@ class GeneralEventSubscriber
         $events->listen(
             'App\Events*', function ($eventName, array $payloads) {
                 foreach($payloads as $payload){
-                    if($payload->shouldDeliverWebhook() && WebhookRegistry::has($eventName)) {
+                    if(WebhookRegistry::has($eventName) && $payload->shouldDeliverWebhook()) {
                         WebhookRegistry::trigger($eventName, $payload->getWebhookPayload());
                     }
                 }
