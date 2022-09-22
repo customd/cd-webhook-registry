@@ -149,7 +149,7 @@ class WebhookRegistry
                 continue;
             }
 
-            $this->dispatchWebhook($endpoint, $endpoint->getWebhookPayload($event, $payload));
+            $this->dispatchWebhook($event->endpoint, $event->endpoint->getWebhookPayload($event, $payload));
         }
     }
 
