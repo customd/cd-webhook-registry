@@ -19,11 +19,11 @@
   ],
   "require": {
     "php": "^8.0",
-    "illuminate/support": "^8.5|^9.0",
+    "illuminate/support": "^8.5|^9.0|^10.0",
     "spatie/laravel-webhook-server": "^3.1"
   },
   "require-dev": {
-    "orchestra/testbench": "^4.0|^5.0",
+    "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0|^8.0",
     "phpunit/phpunit": "^9.3.0"
   },
   "autoload": {
